@@ -7,6 +7,7 @@ type GenerateBody = {
   roomId?: string;
   department?: string;
   studentList?: Student[];
+  studentCount?: number;
   alternateSeating?: boolean;
 };
 
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/generate-seating")({
           if (!body.examName || !body.roomId || !body.department) {
             return Response.json({ error: "Invalid inputs" }, { status: 400 });
           }
+          const requestedCount = Number.isFinite(body.studentCount) ? Number(body.studentCount) : undefined;
           const studentList = Array.isArray(body.studentList) && body.studentList.length
             ? body.studentList
             : mockStudents.filter((student) => student.department === body.department);
@@ -30,7 +32,7 @@ export const Route = createFileRoute("/generate-seating")({
             examName: body.examName,
             roomId: body.roomId,
             department: body.department,
-            studentList,
+            studentList: requestedCount ? studentList.slice(0, requestedCount) : studentList,
             alternateSeating: Boolean(body.alternateSeating),
           });
           return Response.json(result);
