@@ -9,38 +9,141 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudentsRouteImport } from './routes/students'
+import { Route as RoomsRouteImport } from './routes/rooms'
+import { Route as GenerateSeatingRouteImport } from './routes/generate-seating'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthStudentSignupRouteImport } from './routes/auth.student-signup'
+import { Route as AuthStudentLoginRouteImport } from './routes/auth.student-login'
+import { Route as AuthAdminLoginRouteImport } from './routes/auth.admin-login'
 
+const StudentsRoute = StudentsRouteImport.update({
+  id: '/students',
+  path: '/students',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoomsRoute = RoomsRouteImport.update({
+  id: '/rooms',
+  path: '/rooms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateSeatingRoute = GenerateSeatingRouteImport.update({
+  id: '/generate-seating',
+  path: '/generate-seating',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthStudentSignupRoute = AuthStudentSignupRouteImport.update({
+  id: '/auth/student-signup',
+  path: '/auth/student-signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthStudentLoginRoute = AuthStudentLoginRouteImport.update({
+  id: '/auth/student-login',
+  path: '/auth/student-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthAdminLoginRoute = AuthAdminLoginRouteImport.update({
+  id: '/auth/admin-login',
+  path: '/auth/admin-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/generate-seating': typeof GenerateSeatingRoute
+  '/rooms': typeof RoomsRoute
+  '/students': typeof StudentsRoute
+  '/auth/admin-login': typeof AuthAdminLoginRoute
+  '/auth/student-login': typeof AuthStudentLoginRoute
+  '/auth/student-signup': typeof AuthStudentSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/generate-seating': typeof GenerateSeatingRoute
+  '/rooms': typeof RoomsRoute
+  '/students': typeof StudentsRoute
+  '/auth/admin-login': typeof AuthAdminLoginRoute
+  '/auth/student-login': typeof AuthStudentLoginRoute
+  '/auth/student-signup': typeof AuthStudentSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/generate-seating': typeof GenerateSeatingRoute
+  '/rooms': typeof RoomsRoute
+  '/students': typeof StudentsRoute
+  '/auth/admin-login': typeof AuthAdminLoginRoute
+  '/auth/student-login': typeof AuthStudentLoginRoute
+  '/auth/student-signup': typeof AuthStudentSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/generate-seating'
+    | '/rooms'
+    | '/students'
+    | '/auth/admin-login'
+    | '/auth/student-login'
+    | '/auth/student-signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/generate-seating'
+    | '/rooms'
+    | '/students'
+    | '/auth/admin-login'
+    | '/auth/student-login'
+    | '/auth/student-signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/generate-seating'
+    | '/rooms'
+    | '/students'
+    | '/auth/admin-login'
+    | '/auth/student-login'
+    | '/auth/student-signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GenerateSeatingRoute: typeof GenerateSeatingRoute
+  RoomsRoute: typeof RoomsRoute
+  StudentsRoute: typeof StudentsRoute
+  AuthAdminLoginRoute: typeof AuthAdminLoginRoute
+  AuthStudentLoginRoute: typeof AuthStudentLoginRoute
+  AuthStudentSignupRoute: typeof AuthStudentSignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/students': {
+      id: '/students'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof StudentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rooms': {
+      id: '/rooms'
+      path: '/rooms'
+      fullPath: '/rooms'
+      preLoaderRoute: typeof RoomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate-seating': {
+      id: '/generate-seating'
+      path: '/generate-seating'
+      fullPath: '/generate-seating'
+      preLoaderRoute: typeof GenerateSeatingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +151,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/student-signup': {
+      id: '/auth/student-signup'
+      path: '/auth/student-signup'
+      fullPath: '/auth/student-signup'
+      preLoaderRoute: typeof AuthStudentSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/student-login': {
+      id: '/auth/student-login'
+      path: '/auth/student-login'
+      fullPath: '/auth/student-login'
+      preLoaderRoute: typeof AuthStudentLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/admin-login': {
+      id: '/auth/admin-login'
+      path: '/auth/admin-login'
+      fullPath: '/auth/admin-login'
+      preLoaderRoute: typeof AuthAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GenerateSeatingRoute: GenerateSeatingRoute,
+  RoomsRoute: RoomsRoute,
+  StudentsRoute: StudentsRoute,
+  AuthAdminLoginRoute: AuthAdminLoginRoute,
+  AuthStudentLoginRoute: AuthStudentLoginRoute,
+  AuthStudentSignupRoute: AuthStudentSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
