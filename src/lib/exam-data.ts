@@ -55,13 +55,15 @@ const names = [
   "Atharv Pandey", "Kiara Malik", "Harsh Vardhan", "Aisha Ali", "Nikhil Bhatia", "Tanya Gaur",
 ];
 
-export const mockStudents: Student[] = Array.from({ length: 144 }, (_, index) => {
-  const department = departments[index % departments.length];
+export const mockStudents: Student[] = Array.from({ length: 480 }, (_, index) => {
+  const departmentIndex = Math.floor(index / 120) % departments.length;
+  const department = departments[departmentIndex];
+  const departmentRoll = (index % 120) + 1;
   const course = department === "SOICT" ? "B.Tech CSE" : department === "SOBT" ? "B.Sc Biotechnology" : department === "SOV" ? "B.Arch" : "B.Tech Civil";
   return {
     id: `stu-${index + 1}`,
     name: names[index % names.length],
-    rollNumber: `${235 + (index % 3)}/${department === "SOICT" ? "UCS" : department}/${String(index + 1).padStart(3, "0")}`,
+    rollNumber: `${235 + (departmentRoll % 3)}/${department === "SOICT" ? "UCS" : department}/${String(departmentRoll).padStart(3, "0")}`,
     email: `student${index + 1}@gbu.ac.in`,
     course,
     semester: `${(index % 8) + 1}`,
