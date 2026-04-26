@@ -17,7 +17,7 @@ export function studentLogin(identifier: string, password: string) {
 }
 
 export function studentSignup(input: { fullName: string; rollNumber: string; email: string; password: string }) {
-  if (!input.fullName.trim() || !input.rollNumber.trim() || !input.email.includes("@")). {
+  if (!input.fullName.trim() || !input.rollNumber.trim() || !input.email.includes("@")) {
     throw new Error("Enter valid student details");
   }
   if (input.password.length < 6) throw new Error("Password must be at least 6 characters");
