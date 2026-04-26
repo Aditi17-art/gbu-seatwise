@@ -54,6 +54,7 @@ type Tab = "student-login" | "student-signup" | "admin-login";
 type Session = { token: string; user: AuthUser };
 
 type LoginResponse = { token: string; user: AuthUser; error?: string };
+const studentCountOptions = [40, 50, 60, 80, 100, 120];
 
 function Index() {
   const [session, setSession] = useState<Session | null>(null);
@@ -272,13 +273,16 @@ function AdminDashboard({ session, onLogout }: { session: Session; onLogout: () 
   const [examName, setExamName] = useState("Mid Term");
   const [roomId, setRoomId] = useState("IL101");
   const [department, setDepartment] = useState("SOICT");
+  const [studentCount, setStudentCount] = useState("40");
   const [alternateSeating, setAlternateSeating] = useState(false);
   const [allocation, setAllocation] = useState<SeatingResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const students = useMemo(() => getStudentsByDepartment(department), [department]);
+  const selectedStudentCount = Number(studentCount);
+  const selectedStudents = useMemo(() => students.slice(0, selectedStudentCount), [students, selectedStudentCount]);
   const room = rooms.find((item) => item.id === roomId) ?? rooms[0];
   const usableCapacity = alternateSeating ? Math.ceil(room.capacity / 2) : room.capacity;
-  const overflow = students.length > usableCapacity;
+  const overflow = selectedStudents.length > usableCapacity;
 
   const generate = async () => {
     setLoading(true);
@@ -286,7 +290,7 @@ function AdminDashboard({ session, onLogout }: { session: Session; onLogout: () 
       const response = await fetch("/generate-seating", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.token}` },
-        body: JSON.stringify({ examName, roomId, department, studentList: students, alternateSeating }),
+        body: JSON.stringify({ examName, roomId, department, studentCount: selectedStudentCount, studentList: selectedStudents, alternateSeating }),
       });
       const data = (await response.json()) as SeatingResponse & { error?: string };
       if (!response.ok || data.error) throw new Error(data.error || "Unable to generate seating");
