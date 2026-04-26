@@ -54,6 +54,7 @@ type Tab = "student-login" | "student-signup" | "admin-login";
 type Session = { token: string; user: AuthUser };
 
 type LoginResponse = { token: string; user: AuthUser; error?: string };
+const studentCountOptions = [40, 50, 60, 80, 100, 120];
 
 function Index() {
   const [session, setSession] = useState<Session | null>(null);
@@ -272,13 +273,16 @@ function AdminDashboard({ session, onLogout }: { session: Session; onLogout: () 
   const [examName, setExamName] = useState("Mid Term");
   const [roomId, setRoomId] = useState("IL101");
   const [department, setDepartment] = useState("SOICT");
+  const [studentCount, setStudentCount] = useState("40");
   const [alternateSeating, setAlternateSeating] = useState(false);
   const [allocation, setAllocation] = useState<SeatingResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const students = useMemo(() => getStudentsByDepartment(department), [department]);
+  const selectedStudentCount = Number(studentCount);
+  const selectedStudents = useMemo(() => students.slice(0, selectedStudentCount), [students, selectedStudentCount]);
   const room = rooms.find((item) => item.id === roomId) ?? rooms[0];
   const usableCapacity = alternateSeating ? Math.ceil(room.capacity / 2) : room.capacity;
-  const overflow = students.length > usableCapacity;
+  const overflow = selectedStudents.length > usableCapacity;
 
   const generate = async () => {
     setLoading(true);
@@ -286,7 +290,7 @@ function AdminDashboard({ session, onLogout }: { session: Session; onLogout: () 
       const response = await fetch("/generate-seating", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.token}` },
-        body: JSON.stringify({ examName, roomId, department, studentList: students, alternateSeating }),
+        body: JSON.stringify({ examName, roomId, department, studentCount: selectedStudentCount, studentList: selectedStudents, alternateSeating }),
       });
       const data = (await response.json()) as SeatingResponse & { error?: string };
       if (!response.ok || data.error) throw new Error(data.error || "Unable to generate seating");
@@ -309,10 +313,11 @@ function AdminDashboard({ session, onLogout }: { session: Session; onLogout: () 
       <AppHeader user={session.user} onLogout={onLogout} title="GBU Admin Panel" />
       <section className="mx-auto max-w-7xl px-4 py-8 lg:px-6">
         <div className="no-print mb-6 rounded-xl border bg-card p-5 shadow-[var(--shadow-institutional)]">
-          <div className="grid gap-4 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
             <SelectField label="Select Exam" value={examName} onChange={setExamName} options={exams.map((item) => ({ value: item, label: item }))} />
             <SelectField label="Select Room" value={roomId} onChange={setRoomId} options={rooms.map((item) => ({ value: item.id, label: `${item.name} (Capacity ${item.capacity})` }))} />
             <SelectField label="Select Department" value={department} onChange={setDepartment} options={departments.map((item) => ({ value: item, label: item }))} />
+            <SelectField label="Select Student Count" value={studentCount} onChange={setStudentCount} options={studentCountOptions.map((count) => ({ value: String(count), label: `${count} Students` }))} />
             <label className="flex items-center justify-between rounded-lg border bg-background/70 p-4 text-sm font-semibold">
               Enable Alternate Seating
               <input type="checkbox" checked={alternateSeating} onChange={(event) => setAlternateSeating(event.target.checked)} className="h-5 w-5 accent-[var(--primary)]" />
@@ -326,7 +331,7 @@ function AdminDashboard({ session, onLogout }: { session: Session; onLogout: () 
         </div>
 
         <div className="no-print mb-6 grid gap-4 md:grid-cols-3">
-          <Metric icon={<UsersRound />} label="Student Count" value={String(students.length)} />
+          <Metric icon={<UsersRound />} label="Student Count" value={String(selectedStudents.length)} tone={overflow ? "danger" : "success"} />
           <Metric icon={<Building2 />} label="Room Capacity" value={`${usableCapacity} usable / ${room.capacity} total`} tone={overflow ? "danger" : "success"} />
           <Metric icon={<CheckCircle2 />} label="Capacity Indicator" value={overflow ? "Overflow" : "Capacity okay"} tone={overflow ? "danger" : "success"} />
         </div>
